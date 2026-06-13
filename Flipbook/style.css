@@ -1,0 +1,341 @@
+:root{
+  --paper: #fbf6ef;
+  --ink: #2b1d18;
+  --gold: #c9a14a;
+  --gold-soft: #e6c97a;
+  --maroon: #6b1f2a;
+  --rose: #e08585;
+  --shadow-deep: rgba(20,10,8,0.55);
+  --bg-1: #1c1310;
+  --bg-2: #3a2018;
+}
+
+*{ box-sizing: border-box; }
+
+html,body{
+  margin:0; padding:0; height:100%;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  overflow:hidden;
+  background: radial-gradient(ellipse at 50% 30%, #4a2a20 0%, #2a1712 55%, #150b08 100%);
+  color: var(--ink);
+}
+
+/* ===== Ambient background texture & lights ===== */
+.scene{
+  position:relative;
+  width:100%; height:100%;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  perspective: 2600px;
+}
+
+.ambient-glow{
+  position:absolute; inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 50% 18%, rgba(255,220,170,0.18) 0%, transparent 45%),
+    radial-gradient(circle at 15% 85%, rgba(255,180,150,0.08) 0%, transparent 40%),
+    radial-gradient(circle at 85% 85%, rgba(255,180,150,0.08) 0%, transparent 40%);
+  mix-blend-mode: screen;
+  opacity: 0.85;
+}
+
+.vignette{
+  position:absolute; inset:0; pointer-events:none;
+  box-shadow: inset 0 0 12vw 3vw rgba(0,0,0,0.55);
+  z-index:5;
+}
+
+/* floating sparkle particles */
+.particle{
+  position:absolute;
+  border-radius:50%;
+  background: radial-gradient(circle, rgba(255,235,200,0.9) 0%, rgba(255,235,200,0) 70%);
+  pointer-events:none;
+  animation: floatUp linear infinite;
+  opacity:0;
+}
+@keyframes floatUp{
+  0%{ transform: translateY(0) scale(0.4); opacity:0; }
+  10%{ opacity:0.8; }
+  90%{ opacity:0.4; }
+  100%{ transform: translateY(-110vh) scale(1.1); opacity:0; }
+}
+
+/* ===== Title overlay ===== */
+.title-bar{
+  position:absolute;
+  top: 2.2vh;
+  left:0; right:0;
+  text-align:center;
+  z-index:20;
+  pointer-events:none;
+  color: var(--gold-soft);
+  text-shadow: 0 2px 18px rgba(0,0,0,0.6);
+  letter-spacing: 0.18em;
+  font-size: clamp(0.7rem, 1.6vw, 1.05rem);
+  text-transform: uppercase;
+  font-family: 'Trebuchet MS', sans-serif;
+  opacity:0.9;
+}
+.title-bar span{
+  display:inline-block;
+  border-top:1px solid rgba(230,201,122,0.4);
+  border-bottom:1px solid rgba(230,201,122,0.4);
+  padding: 0.35em 1.4em;
+}
+
+/* ===== Book wrapper & realistic shadow on "table" ===== */
+.book-stage{
+  position:relative;
+  width: 100vw;
+  height: calc(100vh - 14vh);
+  display:flex; align-items:center; justify-content:center;
+}
+
+.book-shadow{
+  position:absolute;
+  bottom: -4%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 86%;
+  height: 14%;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0) 75%);
+  z-index:0;
+  transition: width 0.5s ease, opacity 0.5s ease;
+}
+
+#book{
+  box-shadow:
+    0 30px 80px -10px rgba(0,0,0,0.7),
+    0 10px 30px rgba(0,0,0,0.5);
+  border-radius: 4px;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* ===== Page surface styling (applied inside StPageFlip pages) ===== */
+.page{
+  background: var(--paper);
+  overflow:hidden;
+  position:relative;
+}
+
+.page-content{
+  position:absolute; inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.page-content img{
+  width:100%; height:100%;
+  object-fit: contain;
+  background: var(--paper);
+  display:block;
+  -webkit-user-drag:none;
+  user-select:none;
+}
+
+/* ===== Cover & back cover special styling ===== */
+.cover, .back-cover{
+  background: linear-gradient(135deg, var(--maroon) 0%, #4a141d 55%, #2e0c12 100%);
+  display:flex; align-items:center; justify-content:center;
+  position:relative;
+  color: var(--gold-soft);
+}
+.cover::before, .back-cover::before{
+  content:'';
+  position:absolute; inset:10px;
+  border: 1.5px solid rgba(230,201,122,0.55);
+  border-radius:2px;
+  pointer-events:none;
+}
+.cover::after, .back-cover::after{
+  content:'';
+  position:absolute; inset:22px;
+  border: 1px solid rgba(230,201,122,0.28);
+  border-radius:2px;
+  pointer-events:none;
+}
+.cover-leather{
+  position:absolute; inset:0;
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(255,255,255,0.05) 0%, transparent 40%),
+    radial-gradient(circle at 80% 80%, rgba(255,255,255,0.04) 0%, transparent 40%),
+    repeating-linear-gradient(45deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 2px, transparent 2px, transparent 6px);
+  mix-blend-mode: overlay;
+  pointer-events:none;
+}
+.cover-content{
+  position:relative; z-index:2;
+  text-align:center;
+  padding: 8% 10%;
+}
+.cover-content .heart-icon{
+  font-size: clamp(2.2rem, 5vw, 3.6rem);
+  margin-bottom: 0.4em;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
+  color: var(--rose);
+}
+.cover-content h1{
+  font-family: 'Brush Script MT', 'Segoe Script', cursive;
+  font-size: clamp(2rem, 6.5vw, 4.2rem);
+  margin: 0.1em 0;
+  line-height: 1.1;
+  text-shadow: 0 3px 18px rgba(0,0,0,0.5);
+  color: #fff6e6;
+}
+.cover-content .sub{
+  font-family: 'Trebuchet MS', sans-serif;
+  letter-spacing:0.32em;
+  text-transform:uppercase;
+  font-size: clamp(0.55rem, 1.3vw, 0.85rem);
+  color: var(--gold-soft);
+  margin-top:0.6em;
+  opacity:0.9;
+}
+.cover-content .names{
+  margin-top: 1.4em;
+  font-family: 'Trebuchet MS', sans-serif;
+  font-size: clamp(0.75rem, 1.8vw, 1.1rem);
+  letter-spacing:0.08em;
+  color: rgba(255,246,230,0.85);
+}
+.cover-content .divider{
+  width: 38%;
+  height:1px;
+  margin: 1.2em auto;
+  background: linear-gradient(to right, transparent, var(--gold-soft), transparent);
+}
+.corner-flourish{
+  position:absolute; width: 14%; height:14%;
+  opacity:0.45;
+  pointer-events:none;
+}
+.corner-flourish svg{ width:100%; height:100%; }
+.corner-tl{ top:6px; left:6px; transform:rotate(0deg); }
+.corner-tr{ top:6px; right:6px; transform:scaleX(-1); }
+.corner-bl{ bottom:6px; left:6px; transform:scaleY(-1); }
+.corner-br{ bottom:6px; right:6px; transform:scale(-1,-1); }
+
+.back-cover .cover-content{
+  font-family: 'Trebuchet MS', sans-serif;
+}
+.back-cover .cover-content h2{
+  font-family: 'Brush Script MT','Segoe Script',cursive;
+  font-size: clamp(1.6rem, 4.5vw, 3rem);
+  color:#fff6e6;
+  margin-bottom:0.3em;
+}
+.back-cover .cover-content p{
+  font-size: clamp(0.7rem, 1.6vw, 1rem);
+  color: rgba(255,246,230,0.8);
+  line-height:1.8;
+  max-width: 90%;
+  margin: 0.6em auto;
+}
+
+/* ===== StPageFlip default polish ===== */
+.stf__parent{
+  margin: 0 auto;
+}
+.stf__block{
+  box-shadow: none !important;
+}
+
+/* ===== Controls ===== */
+.controls{
+  position:absolute;
+  bottom: 2.2vh;
+  left:0; right:0;
+  display:flex; align-items:center; justify-content:center;
+  gap: 1.2rem;
+  z-index:20;
+}
+.ctrl-btn{
+  width: clamp(40px, 5.5vw, 52px);
+  height: clamp(40px, 5.5vw, 52px);
+  border-radius:50%;
+  border: 1px solid rgba(230,201,122,0.5);
+  background: linear-gradient(145deg, rgba(60,35,28,0.85), rgba(30,16,12,0.9));
+  color: var(--gold-soft);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer;
+  font-size: clamp(1rem, 2vw, 1.3rem);
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08);
+  backdrop-filter: blur(4px);
+}
+.ctrl-btn:hover{
+  background: linear-gradient(145deg, rgba(90,50,38,0.95), rgba(45,24,18,0.95));
+  color: #fff6e6;
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.5), 0 0 16px rgba(230,201,122,0.25);
+}
+.ctrl-btn:active{ transform: translateY(0) scale(0.97); }
+.ctrl-btn.disabled{
+  opacity:0.3;
+  pointer-events:none;
+}
+
+.page-indicator{
+  font-family: 'Trebuchet MS', sans-serif;
+  color: var(--gold-soft);
+  font-size: clamp(0.7rem, 1.6vw, 0.95rem);
+  letter-spacing:0.15em;
+  min-width: 90px;
+  text-align:center;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  opacity:0.85;
+}
+
+.hint{
+  position:absolute;
+  bottom: 9.5vh;
+  left:0; right:0;
+  text-align:center;
+  z-index:18;
+  color: rgba(230,201,122,0.55);
+  font-family:'Trebuchet MS', sans-serif;
+  font-size: clamp(0.6rem, 1.3vw, 0.8rem);
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  pointer-events:none;
+  animation: hintFade 5s ease-in-out forwards;
+}
+@keyframes hintFade{
+  0%, 60%{ opacity:0.6; }
+  100%{ opacity:0; }
+}
+
+/* Loading screen */
+.loader{
+  position:fixed; inset:0;
+  background: #150b08;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  z-index:100;
+  transition: opacity 0.6s ease;
+  color: var(--gold-soft);
+  font-family:'Trebuchet MS', sans-serif;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  font-size:0.85rem;
+}
+.loader .ring{
+  width:54px; height:54px;
+  border-radius:50%;
+  border: 2px solid rgba(230,201,122,0.2);
+  border-top-color: var(--gold-soft);
+  animation: spin 1s linear infinite;
+  margin-bottom:1.2rem;
+}
+@keyframes spin{ to{ transform: rotate(360deg); } }
+.loader.hidden{ opacity:0; pointer-events:none; }
+
+/* Responsive tweaks */
+@media (max-width: 720px){
+  .book-stage{ width: 96vw; height: 70vh; }
+  .controls{ gap:0.7rem; }
+  .title-bar{ display:none; }
+  .hint{ bottom:8vh; }
+}

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Our Anniversary — A Year of Us</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="loader" id="loader">
+  <div class="ring"></div>
+  <div>Opening the book…</div>
+</div>
+
+<div class="scene">
+  <div class="ambient-glow"></div>
+  <div class="vignette"></div>
+  <div id="particles"></div>
+
+  <div class="title-bar"><span>Our Journey · One Year Together</span></div>
+
+  <div class="book-stage">
+    <div class="book-shadow" id="bookShadow"></div>
+    <div id="book"></div>
+  </div>
+
+  <div class="hint">Drag a page corner, or use the arrows, to turn the pages</div>
+
+  <div class="controls">
+    <button class="ctrl-btn" id="prevBtn" title="Previous page" aria-label="Previous page">&#10094;</button>
+    <div class="page-indicator" id="pageIndicator">Cover</div>
+    <button class="ctrl-btn" id="nextBtn" title="Next page" aria-label="Next page">&#10095;</button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
